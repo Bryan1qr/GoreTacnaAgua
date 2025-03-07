@@ -1,4 +1,4 @@
-<img alt="icarhs" src="Scripts/logo2.png" align="right" width = 15%/>
+<img alt="icarhs" src="input/Scripts/logo.png" align="right" width = 15%/>
 
 # DATASET E ICARHS - PERÚ
 
