@@ -42,7 +42,7 @@ dataset_agua2 <- function(ruta, coordenadas){
   listita <- map(archivos_xls, agua)
   
   df_combinado <- bind_rows(listita)%>% 
-    mutate(valor = if_else(grepl("^Ausencia", valor), 0, parse_number(valor)),
+    mutate(valor = if_else(grepl("^Ausencia", valor), 0, parse_number(valor,locale = locale(decimal_mark = ","))),
            codigo = case_when(
              cuenca == "SAMA" & codigo == "RChac2" ~ "RTara1",
              cuenca == "SAMA" & codigo == "RIrab" ~ "RTica2",
@@ -53,7 +53,15 @@ dataset_agua2 <- function(ruta, coordenadas){
     select(-UNIDAD, -año, -periodo) %>% distinct()
   
   espacial <- spatial1(coordenadas)
-  merge(df_combinado, espacial,  by = c("codigo", "cuenca"), all.x = TRUE)
+  merge(df_combinado, espacial,  by = c("codigo", "cuenca"), all.x = TRUE) %>% 
+    mutate(tipo = case_when(
+      grepl("^E", codigo) ~ "léntico",
+      grepl("^L", codigo) ~ "léntico",
+      TRUE ~ "lótico"),
+      cuerpo_agua = str_extract(descripcion, "^\\S+\\s+\\S+"),
+      cuerpo_agua = str_replace_all(cuerpo_agua, ",", ""),
+      cuerpo_agua = str_replace(cuerpo_agua, "^Rio\\b", "Río"),
+      cuerpo_agua = str_squish(cuerpo_agua))
 }
 
 # codigo = case_when(
