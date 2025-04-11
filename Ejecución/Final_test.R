@@ -78,6 +78,16 @@ dataset_largo_v2 <- df3 %>% mutate(id = paste(cuenca, codigo, fecha_larga, sep =
               id_cols = c(cuenca, codigo, fecha_larga, tipo, cuerpo_agua, estado, categoria, zona, este, norte, descripcion)) %>% 
   arrange(cuenca, codigo, fecha_larga)
 
+dataset_largo_v2 %>% 
+  st_as_sf(coords = c("este", "norte"), crs = 32719) %>%
+  st_transform(crs = 4326) %>%            
+  mutate(
+    lon = st_coordinates(.)[, 1],  # Extrae la longitud (X)
+    lat = st_coordinates(.)[, 2]   # Extrae la latitud (Y)
+  ) %>% st_drop_geometry() %>% 
+  as.data.frame() %>% mutate(coordenadas = paste0(lat, ", ", lon)) %>% 
+  select(-lon, -lat) -> dataset_largo_v2
+
 gs4_create("dataset_agua_largo_v1", sheets = list("Hoja1" = dataset_largo_v2))
 
 # Actualizar el google sheet: ---------------------------------------------
