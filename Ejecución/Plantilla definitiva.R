@@ -30,7 +30,12 @@ library(googledrive)
 # Actualizar el google sheet: ---------------------------------------------
 # De la tabla ancha:
 sheet_id <- drive_find(pattern = "dataset_agua_ancho_v1") %>% pull(id)
-range_write(sheet_id, range = "Hoja1", data = tabla1$tabla_ancha, reformat = TRUE)
+sheet_id <- "1lyesoSUlYOveVP77g0ZOyj_ttRyZcj70O3Hqw_q5Bzk"
+db_mod <- tabla1$tabla_ancha %>% 
+  mutate(fecha_larga = format(fecha_larga, "%Y-%m-%d %H:%M"))
+
+range_write(sheet_id, range = "Hoja1", 
+            data = db_mod, reformat = TRUE)
 
 # De la tabla espacial:
 sheet_id2 <- drive_find(pattern = "dataset_espacial_v3") %>% pull(id)
